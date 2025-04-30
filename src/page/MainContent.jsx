@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const PAGE_SIZE = 30;
 
-export default function MainContent({ drawerOpen , activeTeamIndex}) {
+export default function MainContent({ drawerOpen, setTeam, activeTeamIndex }) {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [pokemonList, setPokemonList] = useState([]); // ✅ Array, not {}
 
@@ -15,43 +15,51 @@ export default function MainContent({ drawerOpen , activeTeamIndex}) {
   };
 
 
-
-
-  
-   // ✅ Define the add handler completely
-   const handleAddToTeam = async (pokemon) => {
+  const handleAddToTeam = async (pokemon) => {
     const token = localStorage.getItem('token');
     if (!token) return alert('You must be logged in.');
-
+  
     const simplified = {
       id: pokemon.id,
       name: pokemon.name.english,
       type: pokemon.type,
       sprite: pokemon.image.sprite,
     };
-    const teamRes = await axios.get(`http://localhost:3000/team/${activeTeamIndex}`, {
-      headers: {
-        Authorization: token.startsWith('jwt ') ? token : `jwt ${token}`,
-      },
-    });
-    setTeam(prev => {
-      const updated = [...prev];
-      updated[activeTeamIndex] = teamRes.data.pokemons || [];
-      return updated;
-    });
+  
     try {
-      const res = await axios.post(
-        'http://localhost:3000/team/add', // ✅ Must match backend route exactly
+      // Add to backend
+      await axios.post(
+        'http://localhost:3000/team/add',
         { teamIndex: activeTeamIndex, pokemon: simplified },
-        { headers: { Authorization: token.startsWith('jwt ') ? token : `jwt ${token}` } }
+        {
+          headers: {
+            Authorization: token.startsWith('jwt ') ? token : `jwt ${token}`,
+          },
+        }
       );
-      console.log('✅ Added to team:', res.data);
-     
+  
+      // 🔄 Refresh that specific team slot from backend
+      const teamRes = await axios.get(`http://localhost:3000/team/${activeTeamIndex}`, {
+        headers: {
+          Authorization: token.startsWith('jwt ') ? token : `jwt ${token}`,
+        },
+      });
+  
+      // ✅ Update only the active team
+      setTeam((prev) => {
+        const updated = [...prev];
+        updated[activeTeamIndex] = teamRes.data.pokemons || [];
+        return updated;
+      });
+  
+      console.log('✅ Pokémon added & team updated!');
     } catch (err) {
-      console.error('❌ Failed to add:', err);
+      console.error('❌ Failed to add or refresh:', err);
       alert(err.response?.data?.msg || 'Add failed');
     }
   };
+  
+
 
   useEffect(() => {
     axios.get('http://localhost:3000/pokemon')
@@ -76,7 +84,7 @@ export default function MainContent({ drawerOpen , activeTeamIndex}) {
       <Typography variant="h4" align="center" gutterBottom>
         Pokémon List
       </Typography>
-      
+
       <InfiniteScroll
         dataLength={visible}
         next={loadMore}
@@ -85,14 +93,14 @@ export default function MainContent({ drawerOpen , activeTeamIndex}) {
         style={{ width: "100%", display: 'flex', flexWrap: 'wrap', gap: 16 }}
       >
         {Array.isArray(pokemonList) && pokemonList.slice(0, visible).map((poke) => (
-      <PokemonCard
-      key={poke._id}
-      pokemon={poke}
-      onAdd={handleAddToTeam} // ✅ pass it here!
-    />
-))}
+          <PokemonCard
+            key={poke._id}
+            pokemon={poke}
+            onAdd={handleAddToTeam} // ✅ pass it here!
+          />
+        ))}
       </InfiniteScroll>
-    
+
     </Box>
   );
 }

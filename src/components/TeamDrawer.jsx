@@ -1,5 +1,6 @@
 import { Drawer, Toolbar, Typography, Box, List, ListItem,
-   ToggleButton, Card, CardContent,  Grid } from '@mui/material';
+   ToggleButton, Card, CardContent,  Grid, IconButton} from '@mui/material';
+
  import { useEffect } from 'react';
 
  import axios from 'axios';
@@ -12,6 +13,37 @@ export default function TeamDrawer({ team, setTeam, activeTeamIndex, setActiveTe
       setActiveTeamIndex(newIndex);
     }
   };
+
+  const handleDelete = async (pokeIndex) => {
+    const token = localStorage.getItem('token');
+    try {
+      // Delete from backend
+      await axios.delete(`http://localhost:3000/team/${activeTeamIndex}/${pokeIndex}`, {
+        headers: {
+          Authorization: token.startsWith('jwt ') ? token : `jwt ${token}`,
+        },
+      });
+  
+      // Re-fetch updated team
+      const res = await axios.get(`http://localhost:3000/team/${activeTeamIndex}`, {
+        headers: {
+          Authorization: token.startsWith('jwt ') ? token : `jwt ${token}`,
+        },
+      });
+  
+      // Update only the active team in full team array
+      setTeam(prev => {
+        const updated = [...prev];
+        updated[activeTeamIndex] = res.data.pokemons || [];
+        return updated;
+      });
+  
+      console.log('✅ Deleted Pokémon and refreshed team!');
+    } catch (err) {
+      console.error('❌ Delete failed:', err);
+    }
+  };
+  
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -105,15 +137,40 @@ export default function TeamDrawer({ team, setTeam, activeTeamIndex, setActiveTe
     const pokemon = team[i]; // ← this should not be undefined
     return (
       <Grid item xs={12} key={i}>
-        <Card>
-          <CardContent>
-            {pokemon ? (
-              <Typography>{pokemon.name}</Typography>
-            ) : (
-              <Typography color="textSecondary">Empty</Typography>
-            )}
-          </CardContent>
-        </Card>
+        
+        <CardContent
+  sx={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 2,
+    p: 1,
+    height: 60,
+  }}
+>
+  {pokemon ? (
+    <>
+      {/* Left: Sprite and Name */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <img
+          src={pokemon.sprite}
+          alt={pokemon.name}
+          style={{ width: 40, height: 40, objectFit: 'contain' }}
+        />
+        <Typography variant="body1">{pokemon.name}</Typography>
+      </Box>
+
+      {/* Right: Delete Button */}
+      <IconButton onClick={() => handleDelete(i)} size="small" color="error">
+        ❌
+      </IconButton>
+    </>
+  ) : (
+    <Typography color="textSecondary">Empty</Typography>
+  )}
+</CardContent>
+
+       
       </Grid>
     );
   })}

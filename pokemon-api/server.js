@@ -69,7 +69,7 @@ app.post('/login', async (req, res) => {
     const isMatch = await user.comparePassword(req.body.password);
     if (isMatch) {
       const payload = { id: user._id, username: user.username };
-      const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
+      const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '72h' });
       res.json({ success: true, token: 'jwt ' + token });
     } else {
       res.status(401).json({ success: false, msg: 'Authentication failed. Incorrect password.' });
@@ -165,7 +165,31 @@ app.get('/team/:index', isAuthenticated, async (req, res) => {
   }
 });
 
+// DELETE /team/:teamIndex/:pokeIndex — remove a Pokémon from a team
+app.delete('/team/:teamIndex/:pokeIndex', isAuthenticated, async (req, res) => {
+  const teamIndex = parseInt(req.params.teamIndex);
+  const pokeIndex = parseInt(req.params.pokeIndex);
 
+  try {
+    const team = await Team.findOne({ userId: req.user._id, slot: teamIndex });
+    if (!team) {
+      return res.status(404).json({ success: false, msg: 'Team not found.' });
+    }
+
+    if (pokeIndex < 0 || pokeIndex >= team.pokemons.length) {
+      return res.status(400).json({ success: false, msg: 'Invalid Pokémon index.' });
+    }
+
+    // Remove the Pokémon
+    team.pokemons.splice(pokeIndex, 1);
+    await team.save();
+
+    res.status(200).json({ success: true, pokemons: team.pokemons });
+  } catch (err) {
+    console.error('❌ Failed to delete Pokémon:', err);
+    res.status(500).json({ success: false, msg: 'Server error.' });
+  }
+});
 
 
 

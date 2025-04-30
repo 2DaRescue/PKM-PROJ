@@ -10,16 +10,25 @@ import LoginPage from './page/loginPage';
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [team, setTeam] = useState([[], [], [], [], [], []]); // 6 team slots
-  const [activeTeamIndex, setActiveTeamIndex] = useState(0);
+  const [activeTeamIndex, setActiveTeamIndex] = useState(() => {
+    const saved = localStorage.getItem('activeTeamIndex');
+    return saved !== null ? parseInt(saved) : 0;
+  });
+  
   const [token, setToken] = useState(localStorage.getItem('token'));
 
+  useEffect(() => {
+    localStorage.setItem('activeTeamIndex', activeTeamIndex);
+  }, [activeTeamIndex]);
 
+  
   const handleLogout = () => {
     localStorage.removeItem('token');
     setToken(null);
 
   };
 
+ 
 
   useEffect(() => {
     if (token) {
