@@ -1,108 +1,94 @@
+// 🌿 Load environment variables
+require('dotenv').config();
+console.log('🌱 DB URI:', process.env.PokemonDB);
+// 🔧 Core modules
 const express = require('express');
-const fs = require('fs');
-const path = require('path');
-
-const app = express();
 const cors = require('cors');
-app.use(cors({
-  origin: 'http://localhost:5173' // or whatever port your frontend runs on
-}));
-app.use(express.json()); // Middleware to parse JSON
-
-require('dotenv').config(); //l
 const mongoose = require('mongoose');
+const passport = require('passport');
+const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 
+// 📦 Models & Auth Strategy
+const User = require('./schema/users');
+const Pokemon = require('./schema/pokemon');
+require('./auth_jwt'); // passport strategy
+
+// 🚀 Create app
+const app = express();
+
+// 🔒 Middleware
+app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(passport.initialize());
+
+// 🧬 Connect to MongoDB
 mongoose.connect(process.env.PokemonDB)
-.then(() => console.log("✅ Connected to MongoDB (Pokémon DB)"))
-.catch(err => console.error("❌ MongoDB connection error:", err));
+.then(() => console.log('✅ Connected to MongoDB'))
+.catch(err => console.error('❌ MongoDB error:', err));
 
-
-// Load the JSON file
-const filePath = path.join(__dirname, 'Data', 'pokedex.json');
-const pokemonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-
-
+// 🌐 Test route
 app.get('/', (req, res) => {
-    res.send('Welcom to my Simple pokemon API!!!!');
-  });
-  
-// Get all Pokémonas
-app.get('/pokemon', (req, res) => {
-    res.json(pokemonData);
+  res.send('🎉 Pokémon API is working!');
 });
 
-// Get a Pokémon by English name (case-insensitive)
-app.get('/pokemon/name/:name', (req, res) => {
+// 📝 Signup route
+app.post('/signup', async (req, res) => {
+  if (!req.body.username || !req.body.password) {
+    return res.status(400).json({ success: false, msg: 'Please include both username and password to signup.' });
+  }
 
-    const { name } = req.params;
-    const pokemon = pokemonData.find(p => p.name.english.toLowerCase() === name.toLowerCase());
-
-    if (pokemon) {
-        res.json(pokemon);
-    } else {
-        res.status(404).json({ error: "Pokémon not found" });
-    }
-});
-
-// Get Pokémon by id (e.g., /pokemon/id/151) = mew
-app.get('/pokemon/id/:id',(req, res)=>{
-    const {id} = req.params
-    const pokemon = pokemonData.find( p=>p.id === parseInt(id) )
-    if(pokemon){
-        res.json(pokemon)
-    }
-    else 
-    res.status(404).json({error:"NOPSIES"})
-})
-
-app.get('/pokemon/type/:type',(req, res)=>{
-    const {type} = req.params
-    const pokemon = pokemonData.filter(p =>
-        p.type.some(t => t.toLowerCase() === type.toLowerCase())
-      );
-    if(pokemon){
-        res.json(pokemon)
-    }
-    else 
-    res.status(404).json({error:"NOPSIES"})
-})
-
-app.get('/pokemon/stats/:stat',(req, res)=>{
-    const {stat} = req.params
-    const pokemon = pokemonData.filter(p =>p.type.some(t => t.toLowerCase() === type.toLowerCase())
-      );
-    if(pokemon){
-        res.json(pokemon)
-    }
-    else 
-    res.status(404).json({error:"NOPSIES"})
-})
-
-app.get('/pokemon/total/:value', (req, res) => {
-    const { value } = req.params;
-    const targetTotal = parseInt(value);
-  
-    if (isNaN(targetTotal)) {
-      return res.status(400).json({ error: "Total stat value must be a number" });
-    }
-  
-    const results = pokemonData.filter(p => {
-      if (!p.base) return false; // skip if base stats are missing
-  
-      const total = Object.values(p.base).reduce((sum, stat) => sum + stat, 0);
-      return total === targetTotal;
+  try {
+    const user = new User({
+      name: req.body.name,
+      username: req.body.username,
+      password: req.body.password,
     });
-  
-    if (results.length > 0) {
-      res.json(results);
+    await user.save();
+    res.status(201).json({ success: true, msg: 'Successfully created new user.' });
+  } catch (err) {
+    if (err.code === 11000) {
+      return res.status(409).json({ success: false, message: 'Username already exists.' });
     } else {
-      res.status(404).json({ message: `No Pokémon found with total base stats of ${targetTotal}` });
+      console.error(err);
+      return res.status(500).json({ success: false, message: 'Something went wrong.' });
     }
-  });
-  
+  }
+});
 
+// 🔐 Login route
+app.post('/login', async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.body.username }).select('name username password');
+    if (!user) return res.status(401).json({ success: false, msg: 'Authentication failed. User not found.' });
 
+    const isMatch = await user.comparePassword(req.body.password);
+    if (isMatch) {
+      const payload = { id: user._id, username: user.username };
+      const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
+      console.log('✅ JWT issued:', token);
+      res.json({ success: true, token: 'jwt ' + token });
+    } else {
+      res.status(401).json({ success: false, msg: 'Authentication failed. Incorrect password.' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Something went wrong.' });
+  }
+});
 
-// Start the server
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Pokémon API running on port ${PORT}`));
+// 🧠 Get all Pokémon
+app.get('/pokemon', async (req, res) => {
+  try {
+    const allPokemon = await Pokemon.find();
+    res.json(allPokemon);
+  } catch (err) {
+    console.error('❌ Failed to fetch Pokémon:', err);
+    res.status(500).json({ error: 'Server error retrieving Pokémon' });
+  }
+});
+
+// 🚀 Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 API server running at http://localhost:${PORT}`));

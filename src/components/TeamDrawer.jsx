@@ -10,15 +10,23 @@ export default function TeamDrawer({ team }) {
       sx={{
         width: teamDrawerWidth,
         flexShrink: 0,
+
         '& .MuiDrawer-paper': {
           width: teamDrawerWidth,
           boxSizing: 'border-box',
-          backgroundColor: '#f5f5f5',
+          transition: 'width 0.3s',
+          overflowX: 'auto',
+          
         },
       }}
     >
       <Toolbar />
-      <Box sx={{ overflow: 'auto', p: 2 }}>
+      <Box
+        sx={{
+          backgroundColor: (theme) => theme.palette.background.default,
+          minHeight: '100vh',
+          padding: 2, overflow: 'auto', p: 2
+        }}>
         <Typography variant="h6" align="center" gutterBottom>
           Your Team
         </Typography>

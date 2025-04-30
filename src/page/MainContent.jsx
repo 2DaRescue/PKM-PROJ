@@ -1,6 +1,6 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Box, Typography, Toolbar } from '@mui/material';
-import PokemonCard from './PokemonCard';
+import PokemonCard from '../components/PokemonCard';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -15,10 +15,10 @@ export default function MainContent({ drawerOpen }) {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:3000/pokemon') // ✅ Correct port for backend
+    axios.get('http://localhost:3000/pokemon')
       .then((res) => {
-        console.log(res.data); // ✅ Good for debugging
-        setPokemonList(res.data);
+        console.log('🔥 Response:', res.data);
+        setPokemonList(res.data); // res.data should be an array
       })
       .catch((err) => console.error('❌ API error:', err));
   }, []);
@@ -27,17 +27,19 @@ export default function MainContent({ drawerOpen }) {
     <Box
       component="main"
       sx={{
-        flexGrow: 1,
-        p: 3,
-        backgroundColor: '#fafafa',
+        backgroundColor: (theme) => theme.palette.background.default,
         minHeight: '100vh',
+        padding: 2,
       }}
     >
       <Toolbar />
       <Typography variant="h4" align="center" gutterBottom>
         Pokémon List
       </Typography>
+      <Box
+  id="scrollableCardArea"
 
+>
       <InfiniteScroll
         dataLength={visible}
         next={loadMore}
@@ -45,10 +47,11 @@ export default function MainContent({ drawerOpen }) {
         loader={<h4>Loading...</h4>}
         style={{ width: "100%", display: 'flex', flexWrap: 'wrap', gap: 16 }}
       >
-        {pokemonList.slice(0, visible).map((poke) => (
-  <PokemonCard key={poke._id} pokemon={poke} />
+        {Array.isArray(pokemonList) && pokemonList.slice(0, visible).map((poke) => (
+      <PokemonCard key={poke._id} pokemon={poke} />
 ))}
       </InfiniteScroll>
+    </Box>
     </Box>
   );
 }

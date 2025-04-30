@@ -1,8 +1,9 @@
-import { Card, CardContent, CardMedia, Typography, Stack, Chip } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Stack, Chip, Box} from '@mui/material';
+import { typeColors } from '../assets/typeColors';
 
 export default function PokemonCard({ pokemon }) {
   return (
-    <box sx={{
+    <Box sx={{
       width: 180, // fixed width
       height: '100%',
       display: 'flex',
@@ -36,6 +37,11 @@ export default function PokemonCard({ pokemon }) {
         sx={{ objectFit: 'contain', p: 2 }}
       />
       <CardContent>
+          {/* ID and Name */}
+  <Typography variant="subtitle2" color="textSecondary" align="center">
+    #{pokemon.id.toString().padStart(3, '0')} {/* Shows 001, 025, etc */}
+  </Typography>
+
       <Typography variant="h6" align="center">
   {pokemon.name?.english || 'Unknown'}
   
@@ -43,21 +49,25 @@ export default function PokemonCard({ pokemon }) {
 
         {/* Types if you have them */}
         {pokemon.type && (
-          <Stack direction="row" spacing={1} justifyContent="center" sx={{ mt: 1 }}>
-            {pokemon.type.map((t) => (
-              <Chip key={t} label={t} size="small" />
-            ))}
-          </Stack>
+         <Stack direction="row" spacing={1} justifyContent="center" sx={{ mt: 1 }}>
+         {pokemon.type.map((type) => (
+           <Chip
+             key={type}
+             label={type}
+             size="small"
+             sx={{
+               backgroundColor: typeColors[type] || 'gray', // fallback if unknown
+               color: 'white',
+               fontWeight: 'bold'
+             }}
+           />
+         ))}
+       </Stack>
         )}
 
-        {/* Optional: Display stats */}
-        {pokemon.base && (
-          <Typography variant="body2" align="center" sx={{ mt: 1 }}>
-            HP: {pokemon.base.HP} | SPD: {pokemon.base.Speed}
-          </Typography>
-        )}
+       
       </CardContent>
     </Card>
-    </box>
+    </Box>
   );
 }
