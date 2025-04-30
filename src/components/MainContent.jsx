@@ -43,11 +43,11 @@ export default function MainContent({ drawerOpen }) {
         next={loadMore}
         hasMore={visible < pokemonList.length}
         loader={<h4>Loading...</h4>}
-        style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}
+        style={{ width: "100%", display: 'flex', flexWrap: 'wrap', gap: 16 }}
       >
-        {pokemonList.slice(0, visible).map((poke) => ( // ✅ slice to control amount
-          <PokemonCard key={poke._id} pokemon={poke} />
-        ))}
+        {pokemonList.slice(0, visible).map((poke) => (
+  <PokemonCard key={poke._id} pokemon={poke} />
+))}
       </InfiniteScroll>
     </Box>
   );
