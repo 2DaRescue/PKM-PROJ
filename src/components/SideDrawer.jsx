@@ -1,20 +1,22 @@
-import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, IconButton } from '@mui/material';
+import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, IconButton, Button } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-const drawerWidthOpen = 240;
+const drawerWidthOpen = 200;
 const drawerWidthClosed = 60;
 
-export default function SideDrawer({ open, setOpen }) {
+export default function SideDrawer({ open, setOpen, onLogout }) {
   const toggleDrawer = () => setOpen(!open);
 
   const drawerItems = [
     { text: 'Home', icon: <HomeIcon /> },
     { text: 'Browse', icon: <SearchIcon /> },
     { text: 'Settings', icon: <SettingsIcon /> },
+    { text: 'Leave', icon: <LogoutIcon />, action: onLogout },
   ];
 
   return (
@@ -45,31 +47,34 @@ export default function SideDrawer({ open, setOpen }) {
       </Toolbar>
 
       <List>
-        {drawerItems.map((item) => (
-          <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                {item.icon}
-              </ListItemIcon>
-              {open && (
-                <ListItemText primary={item.text} />
-              )}
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+  {drawerItems.map((item) => (
+    <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
+      <ListItemButton
+
+      onClick={item.action} 
+        sx={{
+          minHeight: 48,
+          justifyContent: open ? 'initial' : 'center',
+          px: 2.5,
+        }}
+      >
+        <ListItemIcon
+          sx={{
+            minWidth: 0,
+            mr: open ? 3 : 'auto',
+            justifyContent: 'center',
+          }}
+        >
+          {item.icon}
+        </ListItemIcon>
+
+        {open && <ListItemText primary={item.text} />}
+        {/* No need for a second <ListItemIcon /> */}
+      </ListItemButton>
+    </ListItem>
+  ))}
+</List>
+
     </Drawer>
   );
 }

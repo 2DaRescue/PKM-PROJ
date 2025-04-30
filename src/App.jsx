@@ -6,23 +6,28 @@ import TeamDrawer from './components/TeamDrawer';
 import MainContent from './page/MainContent';
 import LoginPage from './page/loginPage';
 
-const drawerWidthOpen = 240;
-const drawerWidthClosed = 60;
-const teamDrawerWidth = 300;
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(true);
-  const [team, setTeam] = useState([]);
+  const [team, setTeam] = useState([[], [], [], [], [], []]); // 6 team slots
+  const [activeTeamIndex, setActiveTeamIndex] = useState(0);
   const [token, setToken] = useState(localStorage.getItem('token'));
 
-  // Optional: Auto-remove token if it becomes invalid in future
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+
+  };
+
+
   useEffect(() => {
     if (token) {
       localStorage.setItem('token', token);
     }
   }, [token]);
 
-  // ✅ If not logged in, show login page only
+
   if (!token) {
     return <LoginPage onLogin={setToken} />;
   }
@@ -31,9 +36,19 @@ function App() {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <TopBar onMenuClick={() => setDrawerOpen(!drawerOpen)} />
-      <SideDrawer open={drawerOpen} setOpen={setDrawerOpen} />
-      <MainContent team={team} setTeam={setTeam} drawerOpen={drawerOpen} />
-      <TeamDrawer team={team} />
+      <SideDrawer open={drawerOpen} setOpen={setDrawerOpen} onLogout={handleLogout} />
+      <MainContent
+        team={team}
+        setTeam={setTeam}
+        drawerOpen={drawerOpen}
+        activeTeamIndex={activeTeamIndex}
+      />
+      <TeamDrawer
+        team={team[activeTeamIndex]}
+        setTeam={setTeam}
+        activeTeamIndex={activeTeamIndex}
+        setActiveTeamIndex={setActiveTeamIndex}
+      />
     </Box>
   );
 }

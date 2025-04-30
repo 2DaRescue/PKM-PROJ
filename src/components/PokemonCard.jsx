@@ -1,19 +1,10 @@
-import { Card, CardContent, CardMedia, Typography, Stack, Chip, Box} from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Stack, Chip, Box, IconButton} from '@mui/material';
 import { typeColors } from '../assets/typeColors';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
-export default function PokemonCard({ pokemon }) {
+export default function PokemonCard({ pokemon,onAdd }) {
   return (
-    <Box sx={{
-      width: 180, // fixed width
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      transition: 'transform 0.2s ease-in-out',
-      '&:hover': {
-        transform: 'scale(1.05)',
-      },
-    }}>
+    
     <Card
       sx={{
         width: 150,
@@ -27,8 +18,20 @@ export default function PokemonCard({ pokemon }) {
           transform: 'scale(1.05)',
         },
       }}
-      
     >
+       <IconButton
+        onClick={() => onAdd(pokemon)}
+        size="small"
+        sx={{
+          position: 'absolute',
+          top: 4,
+          right: 4,
+          backgroundColor: 'black',
+          zIndex: 1,
+        }}
+      >
+        <AddCircleOutlineIcon fontSize="small" />
+      </IconButton>
       <CardMedia
         component="img"
         height="140"
@@ -68,6 +71,6 @@ export default function PokemonCard({ pokemon }) {
        
       </CardContent>
     </Card>
-    </Box>
+    
   );
 }

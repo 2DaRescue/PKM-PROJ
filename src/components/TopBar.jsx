@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Typography, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
 export default function TopBar({ onMenuClick }) {
@@ -11,7 +11,10 @@ export default function TopBar({ onMenuClick }) {
         <Typography variant="h6" noWrap>
           Pokémon Team Builder
         </Typography>
+          {/* ✅ Logout button */}
+          
       </Toolbar>
+      
     </AppBar>
   );
 }
