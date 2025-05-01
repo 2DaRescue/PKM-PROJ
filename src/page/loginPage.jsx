@@ -26,9 +26,12 @@ export default function LoginPage({ onLogin }) {
 
         try {
             const res = await axios.post(`http://localhost:3000${url}`, form);
+
+
             if (res.data.token) {
                 localStorage.setItem('token', res.data.token);
                 onLogin?.(res.data.token);
+                
             } else {
                 alert('Login success, but no token received');
             }

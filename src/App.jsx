@@ -8,6 +8,8 @@ import MainContent from './page/MainContent';
 import LoginPage from './page/loginPage';
 import { Routes, Route } from 'react-router-dom';
 import { handleAddToTeam as addToTeam } from './assets/teamAction';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 function App() {
@@ -28,10 +30,35 @@ function App() {
     localStorage.setItem('activeTeamIndex', activeTeamIndex);
   }, [activeTeamIndex]);
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+  
+    const fetchTeams = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/teams', {
+          headers: { Authorization: token }
+        });
+        const teams = Array(6).fill([]); // fallback
+        res.data.teams.forEach((team) => {
+          teams[team.slot] = team.pokemons;
+        });
+        setTeam(teams);
+      } catch (err) {
+        console.error('Failed to fetch teams on load:', err);
+      }
+    };
+  
+    fetchTeams();
+  }, []);
+
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     setToken(null);
+    setTeam([[], [], [], [], [], []]);      // ✅ clear team state
+  setActiveTeamIndex(0);                  // ✅ reset index
+  navigate('/login');                     // ✅ back to login
 
   };
 
