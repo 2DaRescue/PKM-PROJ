@@ -91,6 +91,23 @@ app.get('/pokemon', async (req, res) => {
   }
 });
 
+app.get('/pokemon/:id', async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  try {
+    const poke = await Pokemon.findOne({ id });
+    if (!poke) {
+      return res.status(404).json({ success: false, msg: 'Pokémon not found.' });
+    }
+
+    res.json(poke);
+  } catch (err) {
+    console.error('❌ Error fetching Pokémon by ID:', err);
+    res.status(500).json({ success: false, msg: 'Server error.' });
+  }
+});
+
+
 app.post('/team/add', isAuthenticated, async (req, res) => {
   const { teamIndex, pokemon } = req.body;
   console.log('✅ /team/add called');
@@ -190,6 +207,8 @@ app.delete('/team/:teamIndex/:pokeIndex', isAuthenticated, async (req, res) => {
     res.status(500).json({ success: false, msg: 'Server error.' });
   }
 });
+
+
 
 
 

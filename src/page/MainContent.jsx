@@ -1,12 +1,13 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Box, Typography, Toolbar, IconButton } from '@mui/material';
+import { Box, Typography, Toolbar,TextField, MenuItem } from '@mui/material';
 import PokemonCard from '../components/PokemonCard';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const PAGE_SIZE = 30;
 
-export default function MainContent({ drawerOpen, setTeam, activeTeamIndex }) {
+export default function MainContent({ drawerOpen, setTeam, activeTeamIndex ,add}) {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [pokemonList, setPokemonList] = useState([]); // ✅ Array, not {}
 
@@ -14,7 +15,13 @@ export default function MainContent({ drawerOpen, setTeam, activeTeamIndex }) {
     setVisible((prev) => prev + PAGE_SIZE);
   };
 
-
+  const [filters, setFilters] = useState({
+    id: '',
+    name: '',
+    type: '',
+    total: '',
+    totalCompare: 'gt' // one dropdown for totalStats
+  });
   const handleAddToTeam = async (pokemon) => {
     const token = localStorage.getItem('token');
     if (!token) return alert('You must be logged in.');
@@ -84,7 +91,35 @@ export default function MainContent({ drawerOpen, setTeam, activeTeamIndex }) {
       <Typography variant="h4" align="center" gutterBottom>
         Pokémon List
       </Typography>
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2 }}>
+  <TextField
+    size="small"
+    label="ID"
+    type="number"
+    value={filters.id}
+    onChange={(e) => setFilters({ ...filters, id: e.target.value })}
+  />
+  <TextField
+    size="small"
+    label="Name"
+    value={filters.name}
+    onChange={(e) => setFilters({ ...filters, name: e.target.value })}
+  />
+  <TextField
+    size="small"
+    label="Type"
+    value={filters.type}
+    onChange={(e) => setFilters({ ...filters, type: e.target.value })}
+  />
 
+<TextField
+  size="small"
+  label="Total Stats (e.g. >400)"
+  value={filters.total}
+  onChange={(e) => setFilters({ ...filters, total: e.target.value })}
+  sx={{ width: 180 }}
+/>
+</Box>
       <InfiniteScroll
         dataLength={visible}
         next={loadMore}
@@ -92,13 +127,51 @@ export default function MainContent({ drawerOpen, setTeam, activeTeamIndex }) {
         loader={<h4>Loading...</h4>}
         style={{ width: "100%", display: 'flex', flexWrap: 'wrap', gap: 16 }}
       >
-        {Array.isArray(pokemonList) && pokemonList.slice(0, visible).map((poke) => (
-          <PokemonCard
-            key={poke._id}
-            pokemon={poke}
-            onAdd={handleAddToTeam} // ✅ pass it here!
-          />
-        ))}
+        {Array.isArray(pokemonList) &&
+  pokemonList
+    .filter((poke) => {
+      const matchId = filters.id ? poke.id.toString() === filters.id : true;
+      const matchName = filters.name
+        ? poke.name.english.toLowerCase().includes(filters.name.toLowerCase())
+        : true;
+      const matchType = filters.type
+        ? poke.type.some((t) =>
+            t.toLowerCase().includes(filters.type.toLowerCase())
+          )
+        : true;
+        const matchTotal = filters.total
+        ? (() => {
+            const raw = filters.total.trim();
+            const op = raw[0];
+            const val = parseInt(raw.replace(/[<>=]/g, ''));
+      
+            const total = Object.values(poke.base || {}).reduce((a, b) => a + b, 0);
+      
+            if (isNaN(val)) return true; // skip if invalid
+      
+            if (op === '>') return total > val;
+            if (op === '<') return total < val;
+            if (op === '=') return total === val;
+      
+            // Default to equal if no symbol
+            return total === parseInt(raw);
+          })()
+        : true;
+
+      return matchId && matchName && matchType && matchTotal;
+    })
+    .slice(0, visible)
+    .map((poke) => (
+
+     
+      <PokemonCard
+        key={poke._id||poke.id}
+        pokemon={poke}
+        onAdd={handleAddToTeam}
+      />
+     
+
+    ))}
       </InfiniteScroll>
 
     </Box>

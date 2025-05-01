@@ -1,10 +1,14 @@
 import { Card, CardContent, CardMedia, Typography, Stack, Chip, Box, IconButton} from '@mui/material';
 import { typeColors } from '../assets/typeColors';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { Link } from 'react-router-dom';
 
 export default function PokemonCard({ pokemon,onAdd }) {
   return (
-    
+    <Link
+  to={`/pokemon/${pokemon.id}`}
+  style={{ textDecoration: 'none', color: 'inherit' }}
+>
     <Card
       sx={{
         width: 150,
@@ -20,7 +24,9 @@ export default function PokemonCard({ pokemon,onAdd }) {
       }}
     >
        <IconButton
-        onClick={() => onAdd(pokemon)}
+        onClick={(e) =>{e.stopPropagation(); // ✅ prevent bubble
+          e.preventDefault();  // ✅ prevent link navigation
+           onAdd(pokemon)}}
         size="small"
         sx={{
           position: 'absolute',
@@ -71,6 +77,7 @@ export default function PokemonCard({ pokemon,onAdd }) {
        
       </CardContent>
     </Card>
+    </Link>
     
   );
 }
