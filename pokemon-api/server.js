@@ -23,7 +23,7 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://pkm-proj.onrender.com'
+  'https://pkm-proj-1.onrender.com'
 ];
 
 app.use(cors({
