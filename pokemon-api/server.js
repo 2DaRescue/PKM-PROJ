@@ -154,12 +154,14 @@ app.post('/team/add', isAuthenticated, async (req, res) => {
 
 // 🔐 GET /teams — get all teams for the logged-in user
 app.get('/teams', isAuthenticated, async (req, res) => {
+  console.log('🧪 /teams hit by user:', req.user?.username || 'unknown');
+
   try {
     const teams = await Team.find({ userId: req.user._id }).sort({ createdAt: -1 });
-    res.json({ success: true, teams });
+    return res.json({ success: true, teams }); // ✅ this line is key
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Failed to fetch teams' });
+    console.error('❌ Error fetching teams:', err);
+    return res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 

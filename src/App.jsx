@@ -37,7 +37,7 @@ function App() {
   
     const fetchTeams = async () => {
       try {
-        const res = await axios.get(process.env.VITE_API_URL, {
+        const res = await axios.get(import.meta.env.VITE_API_URL, {
           headers: { Authorization: token }
         });
         const teams = Array(6).fill([]); // fallback
