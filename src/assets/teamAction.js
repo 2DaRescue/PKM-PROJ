@@ -4,17 +4,19 @@ export const handleAddToTeam = async (pokemon, activeTeamIndex, setTeam) => {
   const token = localStorage.getItem('token');
   if (!token) return alert('You must be logged in.');
 
+  const API_BASE = import.meta.env.VITE_API_URL;
+
   const simplified = {
     id: pokemon.id,
     name: pokemon.name.english,
     type: pokemon.type,
     sprite: pokemon.image?.sprite,
   };
-
+import.meta.env.VITE_API_URL
   try {
     // Add to backend
     await axios.post(
-      'http://localhost:3000/team/add',
+      `${API_BASE}/team/add`,
       { teamIndex: activeTeamIndex, pokemon: simplified },
       {
         headers: {
@@ -24,7 +26,7 @@ export const handleAddToTeam = async (pokemon, activeTeamIndex, setTeam) => {
     );
 
     // 🔄 Refresh that specific team slot from backend
-    const teamRes = await axios.get(`http://localhost:3000/team/${activeTeamIndex}`, {
+    const teamRes = await axios.get(`${API_BASE}/team/${activeTeamIndex}`, {
       headers: {
         Authorization: token.startsWith('jwt ') ? token : `jwt ${token}`,
       },

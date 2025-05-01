@@ -21,7 +21,7 @@ require('./auth_jwt'); // passport strategy
 const app = express();
 
 
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());

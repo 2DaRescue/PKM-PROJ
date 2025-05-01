@@ -13,8 +13,8 @@ createRoot(document.getElementById('root')).render(
     <ThemeProvider theme={theme}> {/* ✅ Applies your theme */}
       <CssBaseline />             {/* ✅ Normalizes background, text, etc */}
       <BrowserRouter>
-  <App />
-</BrowserRouter>
+        <App />
+      </BrowserRouter>
     </ThemeProvider>
   </StrictMode>
 );

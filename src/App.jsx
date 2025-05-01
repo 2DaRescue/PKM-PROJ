@@ -11,35 +11,42 @@ import { handleAddToTeam as addToTeam } from './assets/teamAction';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(true);
-  
   const [team, setTeam] = useState([[], [], [], [], [], []]); // 6 team slots
   const [activeTeamIndex, setActiveTeamIndex] = useState(() => {
     const saved = localStorage.getItem('activeTeamIndex');
     return saved !== null ? parseInt(saved) : 0;
   });
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const navigate = useNavigate();
 
-  const handleAddToTeam = (pokemon,) => {
+  const handleAddToTeam = (pokemon) => {
     addToTeam(pokemon, activeTeamIndex, setTeam);
   };
-  const [token, setToken] = useState(localStorage.getItem('token'));
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setTeam([[], [], [], [], [], []]);
+    setActiveTeamIndex(0);
+    navigate('/'); // fallback after logout
+  };
+
+  const API_BASE = import.meta.env.VITE_API_URL;
   useEffect(() => {
     localStorage.setItem('activeTeamIndex', activeTeamIndex);
   }, [activeTeamIndex]);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     if (!token) return;
-  
+
     const fetchTeams = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/teams', {
+        const res = await axios.get(`${API_BASE}/teams`, {
           headers: { Authorization: token }
         });
-        const teams = Array(6).fill([]); // fallback
+        const teams = Array(6).fill([]);
         res.data.teams.forEach((team) => {
           teams[team.slot] = team.pokemons;
         });
@@ -48,21 +55,9 @@ function App() {
         console.error('Failed to fetch teams on load:', err);
       }
     };
-  
+
     fetchTeams();
-  }, []);
-
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setTeam([[], [], [], [], [], []]);      // ✅ clear team state
-  setActiveTeamIndex(0);                  // ✅ reset index
-  navigate('/login');                     // ✅ back to login
-
-  };
-
-
+  }, [token]);
 
   useEffect(() => {
     if (token) {
@@ -70,7 +65,7 @@ function App() {
     }
   }, [token]);
 
-
+  // ⛔ If not logged in, show LoginPage alone
   if (!token) {
     return <LoginPage onLogin={setToken} />;
   }
@@ -80,23 +75,25 @@ function App() {
       <CssBaseline />
 
       <TopBar onMenuClick={() => setDrawerOpen(!drawerOpen)} />
-
       <SideDrawer open={drawerOpen} setOpen={setDrawerOpen} onLogout={handleLogout} />
 
       <Routes>
-        <Route path="/" element={
-          <MainContent
-            team={team}
-            setTeam={setTeam}
-            drawerOpen={drawerOpen}
-            activeTeamIndex={activeTeamIndex}
-            handleAddToTeam={handleAddToTeam}
-          />
-        } />
-        <Route path="/pokemon/:id" element={
-          <PokemonDetail 
-          handleAddToTeam={handleAddToTeam}
-          />} />
+        <Route
+          path="/"
+          element={
+            <MainContent
+              team={team}
+              setTeam={setTeam}
+              drawerOpen={drawerOpen}
+              activeTeamIndex={activeTeamIndex}
+              handleAddToTeam={handleAddToTeam}
+            />
+          }
+        />
+        <Route
+          path="/pokemon/:id"
+          element={<PokemonDetail handleAddToTeam={handleAddToTeam} />}
+        />
       </Routes>
 
       <TeamDrawer

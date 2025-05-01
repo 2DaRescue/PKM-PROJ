@@ -15,17 +15,18 @@ import axios from 'axios';
 export default function LoginPage({ onLogin }) {
     const [isSignup, setIsSignup] = useState(false);
     const [form, setForm] = useState({ username: '', password: '' });
-
+    const API_BASE = import.meta.env.VITE_API_URL;
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
-
+    console.log('🔧 API Base URL:', import.meta.env.VITE_API_URL);
+    console.log('🧪 Mode:', import.meta.env.MODE);
     const handleSubmit = async (e) => {
         e.preventDefault();
         const url = isSignup ? '/signup' : '/login';
 
         try {
-            const res = await axios.post(`http://localhost:3000${url}`, form);
+            const res = await axios.post(`${API_BASE}${url}`, form);
 
 
             if (res.data.token) {

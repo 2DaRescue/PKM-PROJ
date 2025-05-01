@@ -13,19 +13,19 @@ export default function TeamDrawer({ team, setTeam, activeTeamIndex, setActiveTe
       setActiveTeamIndex(newIndex);
     }
   };
-
+  const API_BASE = import.meta.env.VITE_API_URL;
   const handleDelete = async (pokeIndex) => {
     const token = localStorage.getItem('token');
     try {
       // Delete from backend
-      await axios.delete(`http://localhost:3000/team/${activeTeamIndex}/${pokeIndex}`, {
+      await axios.delete(`${API_BASE}/team/${activeTeamIndex}/${pokeIndex}`, {
         headers: {
           Authorization: token.startsWith('jwt ') ? token : `jwt ${token}`,
         },
       });
   
       // Re-fetch updated team
-      const res = await axios.get(`http://localhost:3000/team/${activeTeamIndex}`, {
+      const res = await axios.get(`${API_BASE}/team/${activeTeamIndex}`, {
         headers: {
           Authorization: token.startsWith('jwt ') ? token : `jwt ${token}`,
         },
@@ -49,7 +49,7 @@ export default function TeamDrawer({ team, setTeam, activeTeamIndex, setActiveTe
     const fetchTeam = async () => {
       const token = localStorage.getItem('token');
       try {
-        const res = await axios.get(`http://localhost:3000/team/${activeTeamIndex}`, {
+        const res = await axios.get(`${API_BASE}/team/${activeTeamIndex}`, {
           headers: {
             Authorization: token.startsWith('jwt ') ? token : `jwt ${token}`,
           },
