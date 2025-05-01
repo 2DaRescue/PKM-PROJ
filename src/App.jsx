@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 function App() {
-  const api = import.meta.env.host;
+  const api = import.meta.env.VITE_API_URL;
   const [drawerOpen, setDrawerOpen] = useState(true);
   
   const [team, setTeam] = useState([[], [], [], [], [], []]); // 6 team slots
@@ -37,7 +37,7 @@ function App() {
   
     const fetchTeams = async () => {
       try {
-        const res = await axios.get(process.env.host, {
+        const res = await axios.get(process.env.VITE_API_URL, {
           headers: { Authorization: token }
         });
         const teams = Array(6).fill([]); // fallback

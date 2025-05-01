@@ -3,7 +3,7 @@ import axios from 'axios';
 export const handleAddToTeam = async (pokemon, activeTeamIndex, setTeam) => {
   const token = localStorage.getItem('token');
   if (!token) return alert('You must be logged in.');
-  const api = import.meta.env.host;
+  const api = import.meta.env.VITE_API_URL;
   const simplified = {
     id: pokemon.id,
     name: pokemon.name.english,
