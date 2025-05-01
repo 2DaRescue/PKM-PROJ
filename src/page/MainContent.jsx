@@ -10,7 +10,7 @@ const PAGE_SIZE = 30;
 export default function MainContent({ drawerOpen, setTeam, activeTeamIndex ,add}) {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [pokemonList, setPokemonList] = useState([]); // ✅ Array, not {}
-
+  const api = import.meta.env.VITE_API_URL;
   const loadMore = () => {
     setVisible((prev) => prev + PAGE_SIZE);
   };

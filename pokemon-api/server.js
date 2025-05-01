@@ -65,7 +65,7 @@ app.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username }).select('name username password');
     if (!user) return res.status(401).json({ success: false, msg: 'Authentication failed. User not found.' });
-
+    
     const isMatch = await user.comparePassword(req.body.password);
     if (isMatch) {
       const payload = { id: user._id, username: user.username };
@@ -74,6 +74,7 @@ app.post('/login', async (req, res) => {
     } else {
       res.status(401).json({ success: false, msg: 'Authentication failed. Incorrect password.' });
     }
+    console.log('✅ Token generated:', token);
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Something went wrong.' });
@@ -153,12 +154,14 @@ app.post('/team/add', isAuthenticated, async (req, res) => {
 
 // 🔐 GET /teams — get all teams for the logged-in user
 app.get('/teams', isAuthenticated, async (req, res) => {
+  console.log('🧪 /teams hit by user:', req.user?.username || 'unknown');
+
   try {
     const teams = await Team.find({ userId: req.user._id }).sort({ createdAt: -1 });
-    res.json({ success: true, teams });
+    return res.json({ success: true, teams }); // ✅ this line is key
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Failed to fetch teams' });
+    console.error('❌ Error fetching teams:', err);
+    return res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 

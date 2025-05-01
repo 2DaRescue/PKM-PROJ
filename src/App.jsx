@@ -12,6 +12,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function App() {
+  const api = import.meta.env.VITE_API_URL;
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [team, setTeam] = useState([[], [], [], [], [], []]); // 6 team slots
   const [activeTeamIndex, setActiveTeamIndex] = useState(() => {

@@ -6,7 +6,7 @@ import { Drawer, Toolbar, Typography, Box, List, ListItem,
  import axios from 'axios';
 
 const teamDrawerWidth = 240;
-
+const api = import.meta.env.VITE_API_URL;
 export default function TeamDrawer({ team, setTeam, activeTeamIndex, setActiveTeamIndex }) {
   const handleTeamChange = (event, newIndex) => {
     if (newIndex !== null) {

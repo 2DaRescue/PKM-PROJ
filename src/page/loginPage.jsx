@@ -40,6 +40,7 @@ export default function LoginPage({ onLogin }) {
             console.error('Auth error:', err);
             alert('Login or Signup failed!');
         }
+        
     };
 
     return (
