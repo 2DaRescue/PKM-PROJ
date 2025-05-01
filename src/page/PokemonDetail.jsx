@@ -38,7 +38,7 @@ export default function PokemonDetail({ activeTeamIndex, handleAddToTeam }) {
   ];
   console.log('📊 radarData:', radarData);
   return (
-    <Box sx={{ display: 'flex', gap: 4, px: 4, pb: 4, flexWrap: 'wrap' }}>
+    <Box sx={{ display: 'flex', gap: 4, px: 4,pt:'64px', flexWrap: 'wrap' }}>
       {/* Column 1: Name, image, types */}
       <Box sx={{ flex: 1, minWidth: 240 }}>
         <Typography variant="h3" gutterBottom>{pokemon.name.english} <img
