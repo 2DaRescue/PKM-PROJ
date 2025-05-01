@@ -78,7 +78,7 @@ app.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username }).select('name username password');
     if (!user) return res.status(401).json({ success: false, msg: 'Authentication failed. User not found.' });
-
+    
     const isMatch = await user.comparePassword(req.body.password);
     if (isMatch) {
       const payload = { id: user._id, username: user.username };
@@ -87,6 +87,7 @@ app.post('/login', async (req, res) => {
     } else {
       res.status(401).json({ success: false, msg: 'Authentication failed. Incorrect password.' });
     }
+    console.log('✅ Token generated:', token);
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Something went wrong.' });

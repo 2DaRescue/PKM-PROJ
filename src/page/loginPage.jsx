@@ -26,7 +26,7 @@ export default function LoginPage({ onLogin }) {
 
         try {
             const res = await axios.post(`${api}${url}`, form);
-
+            console.log('🔍 Response from server:', res.data);
 
             if (res.data.token) {
                 localStorage.setItem('token', res.data.token);
@@ -39,6 +39,7 @@ export default function LoginPage({ onLogin }) {
             console.error('Auth error:', err);
             alert('Login or Signup failed!');
         }
+        
     };
 
     return (
