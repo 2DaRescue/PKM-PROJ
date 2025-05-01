@@ -70,9 +70,9 @@ app.post('/login', async (req, res) => {
     if (isMatch) {
       const payload = { id: user._id, username: user.username };
       const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '72h' });
-      res.json({ success: true, token: 'jwt ' + token });
+      return res.json({ success: true, token: 'jwt ' + token });
     } else {
-      res.status(401).json({ success: false, msg: 'Authentication failed. Incorrect password.' });
+      return res.status(401).json({ success: false, msg: 'Authentication failed. Incorrect password.' });
     }
     console.log('✅ Token generated:', token);
   } catch (err) {
