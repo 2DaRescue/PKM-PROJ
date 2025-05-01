@@ -26,6 +26,7 @@ export default function LoginPage({ onLogin }) {
 
         try {
             const res = await axios.post(`${api}${url}`, form);
+            console.log('🔍 Response from server:', api);
             console.log('🔍 Response from server:', res.data);
 
             if (res.data.token) {
