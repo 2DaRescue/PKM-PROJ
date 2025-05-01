@@ -11,11 +11,11 @@ export default function PokemonDetail({ activeTeamIndex, handleAddToTeam }) {
   const { id } = useParams();
   const [pokemon, setPokemon] = useState(null);
 
-
+  const api = import.meta.env.VITE_API_URL;
   useEffect(() => {
     console.log('📡 Fetching for ID:', id);
     axios
-      .get(`http://localhost:3000/pokemon/${id}`)
+      .get(`${api}/pokemon/${id}`)
       .then((res) => {
         console.log('✅ Got Pokémon:', res.data);
         setPokemon(res.data);

@@ -10,7 +10,7 @@ const PAGE_SIZE = 30;
 export default function MainContent({ drawerOpen, setTeam, activeTeamIndex ,add}) {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [pokemonList, setPokemonList] = useState([]); // ✅ Array, not {}
-
+  const api = import.meta.env.VITE_API_URL;
   const loadMore = () => {
     setVisible((prev) => prev + PAGE_SIZE);
   };
@@ -36,7 +36,7 @@ export default function MainContent({ drawerOpen, setTeam, activeTeamIndex ,add}
     try {
       // Add to backend
       await axios.post(
-        'http://localhost:3000/team/add',
+        `${api}`,
         { teamIndex: activeTeamIndex, pokemon: simplified },
         {
           headers: {
@@ -46,7 +46,7 @@ export default function MainContent({ drawerOpen, setTeam, activeTeamIndex ,add}
       );
   
       // 🔄 Refresh that specific team slot from backend
-      const teamRes = await axios.get(`http://localhost:3000/team/${activeTeamIndex}`, {
+      const teamRes = await axios.get(`${api}/team/${activeTeamIndex}`, {
         headers: {
           Authorization: token.startsWith('jwt ') ? token : `jwt ${token}`,
         },
@@ -69,7 +69,7 @@ export default function MainContent({ drawerOpen, setTeam, activeTeamIndex ,add}
 
 
   useEffect(() => {
-    axios.get('http://localhost:3000/pokemon')
+    axios.get(`${api}/pokemon`)
       .then((res) => {
         console.log('🔥 Response:', res.data);
         setPokemonList(res.data); // res.data should be an array

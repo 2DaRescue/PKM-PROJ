@@ -3,7 +3,7 @@ import axios from 'axios';
 export const handleAddToTeam = async (pokemon, activeTeamIndex, setTeam) => {
   const token = localStorage.getItem('token');
   if (!token) return alert('You must be logged in.');
-
+  const api = import.meta.env.host;
   const simplified = {
     id: pokemon.id,
     name: pokemon.name.english,
@@ -14,7 +14,7 @@ export const handleAddToTeam = async (pokemon, activeTeamIndex, setTeam) => {
   try {
     // Add to backend
     await axios.post(
-      'http://localhost:3000/team/add',
+        api,
       { teamIndex: activeTeamIndex, pokemon: simplified },
       {
         headers: {
@@ -24,7 +24,7 @@ export const handleAddToTeam = async (pokemon, activeTeamIndex, setTeam) => {
     );
 
     // 🔄 Refresh that specific team slot from backend
-    const teamRes = await axios.get(`http://localhost:3000/team/${activeTeamIndex}`, {
+    const teamRes = await axios.get(`${api}${activeTeamIndex}`, {
       headers: {
         Authorization: token.startsWith('jwt ') ? token : `jwt ${token}`,
       },
