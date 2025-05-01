@@ -21,20 +21,7 @@ require('./auth_jwt'); // passport strategy
 const app = express();
 
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://pkm-proj-1.onrender.com'
-];
-
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-}));
+app.use(cors({ origin: true }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
