@@ -14,6 +14,8 @@ const jwt = require('jsonwebtoken');
 const User = require('./schema/users');
 const Pokemon = require('./schema/pokemon');
 const Team = require('./schema/teams');
+const Move = require('./schema/move');
+
 const { isAuthenticated } = require('./auth_jwt');
 const Item = require('./schema/Item');
 require('./auth_jwt'); // passport strategy
@@ -224,7 +226,15 @@ app.get('/items', async (req, res) => {
 });
 
 
-
+app.get('/moves', async (req, res) => {
+  try {
+    const moves = await Move.find(); // ✅ should now work
+    res.json(moves);
+  } catch (err) {
+    console.error('❌ Error fetching moves:', err);
+    res.status(500).json({ message: 'Server error retrieving moves' });
+  }
+});
 
 
 

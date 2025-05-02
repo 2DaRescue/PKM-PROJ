@@ -7,6 +7,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoutIcon from '@mui/icons-material/Logout';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import { useNavigate } from 'react-router-dom';
+import MenuBookIcon from '@mui/icons-material/MenuBook'
 
 const drawerWidthOpen = 200;
 const drawerWidthClosed = 60;
@@ -17,7 +18,8 @@ export default function SideDrawer({ open, setOpen, onLogout }) {
 
   const drawerItems = [
     { text: 'Home', icon: <HomeIcon />,action: () => navigate('/')},
-    { text: 'Items', icon: <InventoryIcon />, action: () => navigate('/items') }, // ✅ Add action here
+    { text: 'Items', icon: <InventoryIcon />, action: () => navigate('/items') }, 
+    { text: 'Moves', icon: <MenuBookIcon />, action: () => navigate('/moves') },// ✅ Add action here
     { text: 'Leave', icon: <LogoutIcon />, action: onLogout },
   ];
   

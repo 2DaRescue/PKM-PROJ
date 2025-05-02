@@ -7,7 +7,7 @@ import axios from 'axios';
 
 const ITEM_TYPES = [
   "Pokeballs", "Medicine", "Battle items", "General items",
-  "Hold items", "Key Items", "Berries"
+  "Hold items", "Key Items", "Berries","Machines"
 ];
 
 export default function ItemsPage() {

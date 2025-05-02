@@ -11,6 +11,7 @@ import { Routes, Route } from 'react-router-dom';
 import { handleAddToTeam as addToTeam } from './assets/teamAction';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import MovesPage from './page/MovePage';
 
 function App() {
   const api = import.meta.env.VITE_API_URL;
@@ -97,6 +98,7 @@ function App() {
           element={<PokemonDetail handleAddToTeam={handleAddToTeam} />}
         />
         <Route path="/Items" element={<ItemsPage />} />
+        <Route path="/moves" element={<MovesPage />} />
       </Routes>
       
       <TeamDrawer
