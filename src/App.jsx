@@ -5,6 +5,7 @@ import SideDrawer from './components/SideDrawer';
 import TeamDrawer from './components/TeamDrawer';
 import PokemonDetail from './page/PokemonDetail';
 import MainContent from './page/MainContent';
+import ItemsPage from './page/ItemsPage';
 import LoginPage from './page/loginPage';
 import { Routes, Route } from 'react-router-dom';
 import { handleAddToTeam as addToTeam } from './assets/teamAction';
@@ -95,8 +96,9 @@ function App() {
           path="/pokemon/:id"
           element={<PokemonDetail handleAddToTeam={handleAddToTeam} />}
         />
+        <Route path="/Items" element={<ItemsPage />} />
       </Routes>
-
+      
       <TeamDrawer
         team={team[activeTeamIndex]}
         setTeam={setTeam}

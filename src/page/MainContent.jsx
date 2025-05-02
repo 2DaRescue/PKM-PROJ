@@ -51,7 +51,7 @@ export default function MainContent({ drawerOpen, setTeam, activeTeamIndex ,add}
           Authorization: token.startsWith('jwt ') ? token : `jwt ${token}`,
         },
       });
-  
+
       // ✅ Update only the active team
       setTeam((prev) => {
         const updated = [...prev];
@@ -59,9 +59,9 @@ export default function MainContent({ drawerOpen, setTeam, activeTeamIndex ,add}
         return updated;
       });
   
-      console.log('✅ Pokémon added & team updated!');
+      console.log(' Pokémon added & team updated!');
     } catch (err) {
-      console.error('❌ Failed to add or refresh:', err);
+      console.error(' Failed to add or refresh:', err);
       alert(err.response?.data?.msg || 'Add failed');
     }
   };

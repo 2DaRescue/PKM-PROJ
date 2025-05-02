@@ -15,6 +15,7 @@ const User = require('./schema/users');
 const Pokemon = require('./schema/pokemon');
 const Team = require('./schema/teams');
 const { isAuthenticated } = require('./auth_jwt');
+const Item = require('./schema/Item');
 require('./auth_jwt'); // passport strategy
 
 
@@ -212,7 +213,15 @@ app.delete('/team/:teamIndex/:pokeIndex', isAuthenticated, async (req, res) => {
 });
 
 
-
+app.get('/items', async (req, res) => {
+  try {
+    const items = await Item.find();
+    res.json(items);
+  } catch (err) {
+    console.error('❌ Error fetching items:', err);
+    res.status(500).json({ message: 'Server error retrieving items' });
+  }
+});
 
 
 

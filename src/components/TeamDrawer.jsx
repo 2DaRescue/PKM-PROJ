@@ -75,12 +75,12 @@ export default function TeamDrawer({ team, setTeam, activeTeamIndex, setActiveTe
       sx={{
         width: teamDrawerWidth,
         flexShrink: 0,
-
+        
         '& .MuiDrawer-paper': {
           width: teamDrawerWidth,
           boxSizing: 'border-box',
           transition: 'width 0.3s',
-          overflowX: 'auto',
+          overflowX: 'hidden',
 
         },
       }}
@@ -89,10 +89,10 @@ export default function TeamDrawer({ team, setTeam, activeTeamIndex, setActiveTe
       <Box
         sx={{
           backgroundColor: (theme) => theme.palette.background.default,
-          minHeight: '100vh',
-          padding: 2, overflow: 'auto', p: 2
+          Height: '100%',
+          padding: 2, overflow: 'hidden', p: 2
         }}>
-        <Typography variant="h6" align="center" gutterBottom>
+        <Typography variant="h6" align="center" gutterBottom  sx={ {pt:'64px'}}>
           Your Team
         </Typography>
         <Grid
