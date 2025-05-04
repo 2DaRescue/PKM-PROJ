@@ -19,7 +19,7 @@ export default function SideDrawer({ open, setOpen, onLogout }) {
   const drawerItems = [
     { text: 'Home', icon: <HomeIcon />,action: () => navigate('/')},
     { text: 'Items', icon: <InventoryIcon />, action: () => navigate('/items') }, 
-    { text: 'Moves', icon: <MenuBookIcon />, action: () => navigate('/moves') },// ✅ Add action here
+    { text: 'Moves', icon: <MenuBookIcon />, action: () => navigate('/moves') },
     { text: 'Leave', icon: <LogoutIcon />, action: onLogout },
   ];
   
