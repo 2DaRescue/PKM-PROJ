@@ -100,8 +100,8 @@ export default function TeamDrawer({ team, setTeam, activeTeamIndex, setActiveTe
           spacing={0}
           columns={6}
           sx={{
-            maxWidth: 'fit-content',        // ✅ only take as much space as needed
-            mx: 'auto',                     // ✅ center horizontally
+            maxWidth: 'fit-content',        
+            mx: 'auto',                    
             mt: 1,
           }}
         >
@@ -114,10 +114,10 @@ export default function TeamDrawer({ team, setTeam, activeTeamIndex, setActiveTe
                 size="small"
                 sx={{
                   width: '100%',
-                  fontSize: '0.65rem',         // ✅ small font like type badges
-                  height: 28,                  // ✅ height similar to type chips
+                  fontSize: '0.65rem',        
+                  height: 28,               
                   borderRadius: 1,
-                  m: 0.5,                      // ✅ tiny margin to separate slightly
+                  m: 0.5,                     
                 }}
               >
                 Team {index + 1}
@@ -134,7 +134,7 @@ export default function TeamDrawer({ team, setTeam, activeTeamIndex, setActiveTe
 
   <Grid container spacing={1}>
   {Array.from({ length: 6 }).map((_, i) => {
-    const pokemon = team[i]; // ← this should not be undefined
+    const pokemon = team[i]; 
     return (
       <Grid item xs={12} key={i}>
         
