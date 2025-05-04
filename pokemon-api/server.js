@@ -34,7 +34,7 @@ mongoose.connect(process.env.PokemonDB)
 .then(() => console.log('✅ Connected to MongoDB'))
 .catch(err => console.error('❌ MongoDB error:', err));
 
-// 🌐 Test route
+//test route
 app.get('/', (req, res) => {
   res.send('Welcom to my simple API!');
 });
@@ -115,7 +115,7 @@ app.get('/pokemon/:id', async (req, res) => {
 app.post('/team/add', isAuthenticated, async (req, res) => {
   const { teamIndex, pokemon } = req.body;
   console.log('✅ /team/add called');
-  // ✅ Basic input check
+  
   if (
     typeof teamIndex !== 'number' ||
     !pokemon ||
@@ -161,7 +161,7 @@ app.get('/teams', isAuthenticated, async (req, res) => {
 
   try {
     const teams = await Team.find({ userId: req.user._id }).sort({ createdAt: -1 });
-    return res.json({ success: true, teams }); // ✅ this line is key
+    return res.json({ success: true, teams }); 
   } catch (err) {
     console.error('❌ Error fetching teams:', err);
     return res.status(500).json({ success: false, message: 'Server error' });
@@ -228,7 +228,7 @@ app.get('/items', async (req, res) => {
 
 app.get('/moves', async (req, res) => {
   try {
-    const moves = await Move.find(); // ✅ should now work
+    const moves = await Move.find(); 
     res.json(moves);
   } catch (err) {
     console.error('❌ Error fetching moves:', err);
